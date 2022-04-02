@@ -75,6 +75,7 @@ def get_all_items():
     # * company link
     # * company address
 
+    job_list = []
     for item in contents:
         title = item.find('h2', 'jobTitle').text
         company = item.find('span', 'companyName')
@@ -84,9 +85,20 @@ def get_all_items():
         except:
             company_link = 'Link is not available'
 
-        print(company_link)
+        # print(company_link)
 
+        data_dictionary = {
+            'title': title,
+            'company_name': company_name,
+            'link': company_link
+        }
+        job_list.append(data_dictionary)
+
+    return job_list
+    # cetak data disini
+    # print(f" Jumlah data : {len(job_list)}")
 
 if __name__ == '__main__':
+    pass
     # print(get_total_pages())
-    get_all_items()
+    # print(get_all_items())

@@ -2,6 +2,7 @@ import os
 import json
 import requests
 from bs4 import BeautifulSoup
+import pandas as pd
 
 url = 'https://www.indeed.com/jobs?'
 site = 'https://www.indeed.com'
@@ -61,9 +62,15 @@ def get_all_items():
 
     res = requests.get(url, params=params, headers=headers)
 
-    with open('temp/res.html', 'w+') as outfile:
+    try:
+        os.mkdir('temp')
+    except FileExistsError:
+        pass
+
+    with open('temp/result.html', 'w+') as outfile:
         outfile.write(res.text)
         outfile.close()
+
     soup = BeautifulSoup(res.text, 'html.parser')
 
     # Scraping process
@@ -109,6 +116,13 @@ def get_all_items():
         json.dump(job_list, json_data)
     print('json created')
 
+    # create csv
+    df = pd.DataFrame(job_list)
+    df.to_csv('indeed_data.csv', index=False)
+    df.to_excel('indeed_data.xlsx', index=False)
+
+    # data created
+    print('Data Created Success')
 
 if __name__ == '__main__':
     # print(get_total_pages())

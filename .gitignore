@@ -1,6 +1,7 @@
 .idea/
 data_resultspython developer.xlsx
-data_result/
+data_result/*
+json_result/*
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

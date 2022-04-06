@@ -13,21 +13,23 @@ params = {
     'vjk': '5f2fbaaa634be72b'
 }
 
-headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.84 Safari/537.36'}
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.84 Safari/537.36'}
 
 result = requests.get(url, params=params, headers=headers)
 # print(result.status_code)
 
 soup = BeautifulSoup(result.text, 'html.parser')
 
-def get_total_pages():
-    params = {
-        'q': 'Python Developer',
-        'l': 'New York State',
+
+def get_total_pages(query, location):
+    parameters = {
+        'q': query,
+        'l': location,
         'vjk': '5f2fbaaa634be72b'
     }
 
-    res = requests.get(url, params=params, headers=headers)
+    res = requests.get(url, params=parameters, headers=headers)
 
     try:
         os.mkdir('temp')
@@ -41,22 +43,21 @@ def get_total_pages():
     total_pages = []
     # Scraping Step
     soup = BeautifulSoup(res.text, 'html.parser')
-    # print(soup.prettify())
     pagination = soup.find('ul', 'pagination-list')
     pages = pagination.find_all('li')
     for page in pages:
-        # print(page.text)
         total_pages.append(page.text)
-    # print(total_pages)
 
     total = int(max(total_pages))
     # print(total)
     return total
 
-def get_all_items():
-    params = {
-        'q': 'Python Developer',
-        'l': 'New York State',
+
+def get_all_items(query, location, start, page):
+    parameters = {
+        'q': query,
+        'l': location,
+        'start': start,
         'vjk': '5f2fbaaa634be72b'
     }
 
@@ -112,18 +113,51 @@ def get_all_items():
     except FileExistsError:
         pass
 
-    with open('json_result/job_list.json', 'w+') as json_data:
+    with open(f"json_result/{query}_in_{location}_page_{page}.json", 'w+') as json_data:
         json.dump(job_list, json_data)
     print('json created')
 
-    # create csv
-    df = pd.DataFrame(job_list)
-    df.to_csv('indeed_data.csv', index=False)
-    df.to_excel('indeed_data.xlsx', index=False)
+    return job_list
 
-    # data created
-    print('Data Created Success')
+
+def create_document(dataFrame, fileName):
+    try:
+        os.mkdir('data_result')
+    except FileExistsError:
+        pass
+
+    df = pd.DataFrame(dataFrame)
+    df.to_csv(f'data_result/{fileName}.csv', index=False)
+    df.to_excel(f'data_results{fileName}.xlsx', index=False)
+
+    print(f'File {fileName}.csv and {fileName}.xlsx successfully created')
+
+
+def run():
+    query = input('Enter Your Query: ')
+    location = input('Enter Your Location: ')
+    total = get_total_pages(query, location)
+    counter = 0
+    final_result = []
+    for page in range(total):
+        page += 1
+        counter += 10
+        final_result += get_all_items(query, location, counter, page)
+
+    # formatting data
+    try:
+        os.mkdir('reports')
+    except FileExistsError:
+        pass
+
+    with open('reports/{}.json'.format(query), 'w+') as final_data:
+        json.dump(final_result, final_data)
+
+    print('Data JSON Created')
+
+    # create document
+    create_document(final_result, query)
+
 
 if __name__ == '__main__':
-    # print(get_total_pages())
-    get_all_items()
+    run()

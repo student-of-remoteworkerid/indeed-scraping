@@ -1,4 +1,9 @@
 .idea/
+data_resultspython developer.xlsx
+.data_result/
+.json_result/
+.reports/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -128,3 +133,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+

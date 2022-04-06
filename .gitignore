@@ -1,9 +1,6 @@
 .idea/
 data_resultspython developer.xlsx
 data_result/
-json_result/
-reports/
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -16,7 +13,7 @@ __pycache__/
 .Python
 build/
 develop-eggs/
-dist/
+dist/k
 downloads/
 eggs/
 .eggs/
